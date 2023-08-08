@@ -183,10 +183,10 @@ def _sequential_parametric_estimate(
     return estimates
 
 
-def create_itensor_mps_parametric_estimator() -> (
-    ParametricQuantumEstimator[ITensorParametricStateT]
-):
-    return create_parametric_estimator(create_itensor_mps_estimator())
+def create_itensor_mps_parametric_estimator(
+    **kwargs,
+) -> ParametricQuantumEstimator[ITensorParametricStateT]:
+    return create_parametric_estimator(create_itensor_mps_estimator(**kwargs))
 
 
 def create_itensor_mps_concurrent_parametric_estimator(
