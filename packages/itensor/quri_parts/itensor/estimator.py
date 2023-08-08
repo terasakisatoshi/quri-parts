@@ -69,7 +69,7 @@ def create_itensor_mps_estimator(**kwargs) -> QuantumEstimator[ITensorStateT]:
     calculate expectation values."""
 
     def estimator(operator: Estimatable, state: ITensorStateT) -> Estimate[complex]:
-        return _estimate(operator, states, **kwargs)
+        return _estimate(operator, state, **kwargs)
 
     return estimator
 
