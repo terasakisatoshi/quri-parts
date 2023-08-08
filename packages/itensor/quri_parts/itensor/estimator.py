@@ -41,7 +41,9 @@ ITensorStateT: TypeAlias = CircuitQuantumState
 ITensorParametricStateT: TypeAlias = ParametricCircuitQuantumState
 
 
-def _estimate(operator: Estimatable, state: ITensorStateT) -> Estimate[complex]:
+def _estimate(
+    operator: Estimatable, state: ITensorStateT, **kwargs
+) -> Estimate[complex]:
     ensure_itensor_loaded()
     if operator == zero():
         return _Estimate(value=0.0, error=0.0)
@@ -56,17 +58,20 @@ def _estimate(operator: Estimatable, state: ITensorStateT) -> Estimate[complex]:
     op = convert_operator(operator, s)
 
     # calculate expectation value
-    psi = jl.apply(circuit, psi)
+    psi = jl.apply(circuit, psi, **kwargs)
     exp: float = jl.expectation(psi, op)
 
     return _Estimate(value=exp, error=0.0)
 
 
-def create_itensor_mps_estimator() -> QuantumEstimator[ITensorStateT]:
+def create_itensor_mps_estimator(**kwargs) -> QuantumEstimator[ITensorStateT]:
     """Returns a :class:`~QuantumEstimator` that uses ITensor MPS simulator to
     calculate expectation values."""
 
-    return _estimate
+    def estimator(operator: Estimatable, state: ITensorStateT) -> Estimate[complex]:
+        return _estimate(operator, states, **kwargs)
+
+    return estimator
 
 
 def _sequential_estimate(
