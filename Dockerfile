@@ -17,3 +17,4 @@ USER ${USER}
 
 ENV PATH ${HOME}/.local/bin:${PATH}
 RUN pip3 install poetry
+RUN git config --global --add safe.directory /work
