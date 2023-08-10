@@ -1,0 +1,5 @@
+[deps]
+ITensors = "9136182c-28ba-11e9-034c-db9fb085ebd5"
+
+[compat]
+ITensors = "=0.3.34"
