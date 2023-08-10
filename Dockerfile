@@ -13,5 +13,5 @@ RUN adduser --disabled-password \
 
 USER ${USER}
 
-ENV PATH ~/.local/bin:${PATH}
+ENV PATH ${HOME}/.local/bin:${PATH}
 RUN pip3 install poetry
