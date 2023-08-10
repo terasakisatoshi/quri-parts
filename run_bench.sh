@@ -1,3 +1,3 @@
-poetry shell
-pip3 install openfermionpyscf
-python hewansatz_benchmark.py
+poetry install
+poetry run pip3 install openfermionpyscf
+poetry run python hewansatz_benchmark.py
