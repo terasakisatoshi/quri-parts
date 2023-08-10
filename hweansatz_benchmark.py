@@ -23,6 +23,7 @@ import juliacall
 
 jl = juliacall.Main
 jl.Pkg.activate(".")
+jl.Pkg.instantiate()
 import json
 
 print(f"{jl.Base.active_project()=}")
