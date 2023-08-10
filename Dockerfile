@@ -1,3 +1,4 @@
+# docker build -t goma-quri . --build-arg NB_UID=`id -u` && docker run --rm -it -v $PWD:/home/jovyan -w /home/jovyan goma-quri bash
 FROM python:3.10
 
 # create user with a home directory
