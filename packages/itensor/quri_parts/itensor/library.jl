@@ -1,5 +1,7 @@
 import Pkg
-Pkg.add("ITensors")
+if !("ITensors" in keys(Pkg.project().dependencies))
+    Pkg.add("ITensors")
+end
 using ITensors
 
 ITensors.op(::OpName"I", ::SiteType"Qubit") = [
