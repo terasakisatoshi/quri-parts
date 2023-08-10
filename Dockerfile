@@ -11,6 +11,8 @@ RUN adduser --disabled-password \
     --uid ${NB_UID} \
     ${NB_USER}
 
+RUN mkdir /work && chown -R ${NB_UID} /work
+
 USER ${USER}
 
 ENV PATH ${HOME}/.local/bin:${PATH}
