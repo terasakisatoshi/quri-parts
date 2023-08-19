@@ -183,8 +183,6 @@ class TestITensorParametricEstimator:
             estimate = estimator(operator, state, params)
             assert estimate.value == pytest.approx(expected_list[i])
 
-
-
     def test_estimate_operator_with_jl_apply_kwargs(self) -> None:
         operator = Operator(
             {
