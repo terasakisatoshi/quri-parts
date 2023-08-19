@@ -4,13 +4,13 @@ from multiprocessing import get_context
 from typing import Union
 
 import pytest
-
 from quri_parts.circuit import (
     UnboundParametricQuantumCircuit,
     UnboundParametricQuantumCircuitProtocol,
 )
 from quri_parts.core.operator import Operator, PauliLabel, pauli_label
 from quri_parts.core.state import ComputationalBasisState, ParametricCircuitQuantumState
+
 from quri_parts.itensor.estimator import (
     create_itensor_mps_concurrent_estimator,
     create_itensor_mps_estimator,
@@ -26,7 +26,9 @@ class TestITensorEstimator:
         estimate = estimator(pauli, state)
         assert estimate.value == -1
 
-        estimator_with_kwargs = create_itensor_mps_estimator(mindim=1, maxdim=2, cutoff=0.01)
+        estimator_with_kwargs = create_itensor_mps_estimator(
+            mindim=1, maxdim=2, cutoff=0.01
+        )
         estimate_with_kwargs = estimator_with_kwargs(pauli, state)
         assert estimate_with_kwargs.value == -1
 
@@ -42,7 +44,9 @@ class TestITensorEstimator:
         estimate = estimator(operator, state)
         assert estimate.value == -0.25 + 0.5j
 
-        estimator_with_kwargs = create_itensor_mps_estimator(mindim=1, maxdim=2, cutoff=0.01)
+        estimator_with_kwargs = create_itensor_mps_estimator(
+            mindim=1, maxdim=2, cutoff=0.01
+        )
         estimate_with_kwargs = estimator_with_kwargs(operator, state)
         assert estimate_with_kwargs.value == -0.25 + 0.5j
 
@@ -206,20 +210,27 @@ class TestITensorParametricEstimator:
             for i in range(8):
                 circuit.add_ParametricRY_gate(i)
                 circuit.add_ParametricRZ_gate(i)
-            for i in [1,3,5]:
-                circuit.add_CZ_gate(i, i+1)
-            for i in [0,2,4,6]:
-                circuit.add_CZ_gate(i, i+1)
+            for i in [1, 3, 5]:
+                circuit.add_CZ_gate(i, i + 1)
+            for i in [0, 2, 4, 6]:
+                circuit.add_CZ_gate(i, i + 1)
             for i in range(8):
                 circuit.add_ParametricRY_gate(i)
                 circuit.add_ParametricRZ_gate(i)
 
         state = ParametricCircuitQuantumState(8, circuit)
-        params = [i/64 for i in range(64)]
+        params = [i / 64 for i in range(64)]
         estimator = create_itensor_mps_parametric_estimator()
         estimate = estimator(operator, state, params)
-        assert estimate.value == pytest.approx(0.024541701187281842 + 0.02441865385682042j)
-
-        estimator_with_kwargs = create_itensor_mps_parametric_estimator(mindim=1, maxdim=2, cutoff=0.01)
+        assert estimate.value == pytest.approx(
+            0.024541701187281842 + 0.02441865385682042j
+        )
+        # Note that the results of numerical calculations differ
+        # depending on the presence or absence of keyword arguments.
+        estimator_with_kwargs = create_itensor_mps_parametric_estimator(
+            mindim=1, maxdim=2, cutoff=0.01
+        )
         estimate_with_kwargs = estimator_with_kwargs(operator, state, params)
-        assert estimate_with_kwargs.value == pytest.approx(0.024748751563436706 + 0.02891269249339678j)
+        assert estimate_with_kwargs.value == pytest.approx(
+            0.024748751563436706 + 0.02891269249339678j
+        )
