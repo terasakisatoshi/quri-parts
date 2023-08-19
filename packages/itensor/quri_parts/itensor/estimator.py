@@ -42,7 +42,7 @@ ITensorParametricStateT: TypeAlias = ParametricCircuitQuantumState
 
 
 def _estimate(
-    operator: Estimatable, state: ITensorStateT, **kwargs
+    operator: Estimatable, state: ITensorStateT, **jl_apply_kwargs
 ) -> Estimate[complex]:
     ensure_itensor_loaded()
     if operator == zero():
@@ -58,18 +58,18 @@ def _estimate(
     op = convert_operator(operator, s)
 
     # calculate expectation value
-    psi = jl.apply(circuit, psi, **kwargs)
+    psi = jl.apply(circuit, psi, **jl_apply_kwargs)
     exp: float = jl.expectation(psi, op)
 
     return _Estimate(value=exp, error=0.0)
 
 
-def create_itensor_mps_estimator(**kwargs) -> QuantumEstimator[ITensorStateT]:
+def create_itensor_mps_estimator(**jl_apply_kwargs) -> QuantumEstimator[ITensorStateT]:
     """Returns a :class:`~QuantumEstimator` that uses ITensor MPS simulator to
     calculate expectation values."""
 
     def estimator(operator: Estimatable, state: ITensorStateT) -> Estimate[complex]:
-        return _estimate(operator, state, **kwargs)
+        return _estimate(operator, state, **jl_apply_kwargs)
 
     return estimator
 
@@ -184,9 +184,9 @@ def _sequential_parametric_estimate(
 
 
 def create_itensor_mps_parametric_estimator(
-    **kwargs,
+    **jl_apply_kwargs,
 ) -> ParametricQuantumEstimator[ITensorParametricStateT]:
-    return create_parametric_estimator(create_itensor_mps_estimator(**kwargs))
+    return create_parametric_estimator(create_itensor_mps_estimator(**jl_apply_kwargs))
 
 
 def create_itensor_mps_concurrent_parametric_estimator(
