@@ -26,6 +26,10 @@ class TestITensorEstimator:
         estimate = estimator(pauli, state)
         assert estimate.value == -1
 
+        estimator_with_kwargs = create_itensor_mps_estimator(mindim=1, maxdim=2, cutoff=0.01)
+        estimate_with_kwargs = estimator_with_kwargs(pauli, state)
+        assert estimate_with_kwargs.value == -1
+
     def test_estimate_operator(self) -> None:
         operator = Operator(
             {
@@ -37,6 +41,10 @@ class TestITensorEstimator:
         estimator = create_itensor_mps_estimator()
         estimate = estimator(operator, state)
         assert estimate.value == -0.25 + 0.5j
+
+        estimator_with_kwargs = create_itensor_mps_estimator(mindim=1, maxdim=2, cutoff=0.01)
+        estimate_with_kwargs = estimator_with_kwargs(operator, state)
+        assert estimate_with_kwargs.value == -0.25 + 0.5j
 
 
 class TestITensorConcurrentEstimator:
@@ -208,9 +216,9 @@ class TestITensorParametricEstimator:
 
         state = ParametricCircuitQuantumState(8, circuit)
         params = [i/64 for i in range(64)]
-        estimator_without_kwargs = create_itensor_mps_parametric_estimator()
-        estimate_without_kwargs = estimator_without_kwargs(operator, state, params)
-        assert estimate_without_kwargs.value == pytest.approx(0.024541701187281842 + 0.02441865385682042j)
+        estimator = create_itensor_mps_parametric_estimator()
+        estimate = estimator(operator, state, params)
+        assert estimate.value == pytest.approx(0.024541701187281842 + 0.02441865385682042j)
 
         estimator_with_kwargs = create_itensor_mps_parametric_estimator(mindim=1, maxdim=2, cutoff=0.01)
         estimate_with_kwargs = estimator_with_kwargs(operator, state, params)
