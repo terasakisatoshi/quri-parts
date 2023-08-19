@@ -4,8 +4,6 @@ from typing import TYPE_CHECKING, Any, Callable, NamedTuple, Optional
 import juliacall
 import numpy as np
 from juliacall import Main as jl
-from typing_extensions import TypeAlias
-
 from quri_parts.core.estimator import (
     ConcurrentParametricQuantumEstimator,
     ConcurrentQuantumEstimator,
@@ -18,6 +16,8 @@ from quri_parts.core.estimator import (
 from quri_parts.core.operator import zero
 from quri_parts.core.state import CircuitQuantumState, ParametricCircuitQuantumState
 from quri_parts.core.utils.concurrent import execute_concurrently
+from typing_extensions import TypeAlias
+
 from quri_parts.itensor.load_itensor import ensure_itensor_loaded
 
 from .circuit import convert_circuit
@@ -42,7 +42,7 @@ ITensorParametricStateT: TypeAlias = ParametricCircuitQuantumState
 
 
 def _estimate(
-    operator: Estimatable, state: ITensorStateT, **kwargs
+    operator: Estimatable, state: ITensorStateT, **kwargs: Any
 ) -> Estimate[complex]:
     ensure_itensor_loaded()
     if operator == zero():
@@ -64,10 +64,13 @@ def _estimate(
     return _Estimate(value=exp, error=0.0)
 
 
-def create_itensor_mps_estimator(**kwargs) -> QuantumEstimator[ITensorStateT]:
+def create_itensor_mps_estimator(**kwargs: Any) -> QuantumEstimator[ITensorStateT]:
     """Returns a :class:`~QuantumEstimator` that uses ITensor MPS simulator to
-    calculate expectation values. Keyword arguments are passed to
-    `ITensors.apply <https://itensor.github.io/ITensors.jl/dev/MPSandMPO.html#ITensors.product-Tuple{ITensor,%20ITensors.AbstractMPS}>`_
+    calculate expectation values.
+
+    Keyword arguments are passed to
+    `ITensors.apply <https://itensor.github.io/ITensors.jl/dev/MPSandMPO.html#ITensors.
+    product-Tuple{ITensor,%20ITensors.AbstractMPS}>`_
     """
 
     def estimator(operator: Estimatable, state: ITensorStateT) -> Estimate[complex]:
@@ -185,7 +188,9 @@ def _sequential_parametric_estimate(
     return estimates
 
 
-def create_itensor_mps_parametric_estimator(**kwargs) -> ParametricQuantumEstimator[ITensorParametricStateT]:
+def create_itensor_mps_parametric_estimator(
+    **kwargs:Any,
+) -> ParametricQuantumEstimator[ITensorParametricStateT]:
     return create_parametric_estimator(create_itensor_mps_estimator(**kwargs))
 
 
