@@ -182,3 +182,38 @@ class TestITensorParametricEstimator:
         ):
             estimate = estimator(operator, state, params)
             assert estimate.value == pytest.approx(expected_list[i])
+
+
+
+    def test_estimate_operator_with_jl_apply_kwargs(self) -> None:
+        operator = Operator(
+            {
+                pauli_label("Y0 X2 Y5"): 0.25,
+                pauli_label("Z1 X2 Z4"): 0.5j,
+            }
+        )
+
+        circuit = UnboundParametricQuantumCircuit(8)
+        for _ in range(2):
+            for i in range(4):
+                circuit.add_X_gate(i)
+            for i in range(8):
+                circuit.add_ParametricRY_gate(i)
+                circuit.add_ParametricRZ_gate(i)
+            for i in [1,3,5]:
+                circuit.add_CZ_gate(i, i+1)
+            for i in [0,2,4,6]:
+                circuit.add_CZ_gate(i, i+1)
+            for i in range(8):
+                circuit.add_ParametricRY_gate(i)
+                circuit.add_ParametricRZ_gate(i)
+
+        state = ParametricCircuitQuantumState(8, circuit)
+        params = [i/64 for i in range(64)]
+        estimator_without_kwargs = create_itensor_mps_parametric_estimator()
+        estimate_without_kwargs = estimator_without_kwargs(operator, state, params)
+        assert estimate_without_kwargs.value == pytest.approx(0.024541701187281842 + 0.02441865385682042j)
+
+        estimator_with_kwargs = create_itensor_mps_parametric_estimator(mindim=1, maxdim=2, cutoff=0.01)
+        estimate_with_kwargs = estimator_with_kwargs(operator, state, params)
+        assert estimate_with_kwargs.value == pytest.approx(0.024748751563436706 + 0.02891269249339678j)
