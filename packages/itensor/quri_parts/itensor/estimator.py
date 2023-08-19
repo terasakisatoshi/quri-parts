@@ -66,7 +66,9 @@ def _estimate(
 
 def create_itensor_mps_estimator(**kwargs) -> QuantumEstimator[ITensorStateT]:
     """Returns a :class:`~QuantumEstimator` that uses ITensor MPS simulator to
-    calculate expectation values."""
+    calculate expectation values. Keyword arguments are passed to
+    `ITensors.apply <https://itensor.github.io/ITensors.jl/dev/MPSandMPO.html#ITensors.product-Tuple{ITensor,%20ITensors.AbstractMPS}>`_
+    """
 
     def estimator(operator: Estimatable, state: ITensorStateT) -> Estimate[complex]:
         return _estimate(operator, state, **kwargs)
@@ -183,9 +185,7 @@ def _sequential_parametric_estimate(
     return estimates
 
 
-def create_itensor_mps_parametric_estimator(
-    **kwargs,
-) -> ParametricQuantumEstimator[ITensorParametricStateT]:
+def create_itensor_mps_parametric_estimator(**kwargs) -> ParametricQuantumEstimator[ITensorParametricStateT]:
     return create_parametric_estimator(create_itensor_mps_estimator(**kwargs))
 
 
